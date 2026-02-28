@@ -1,134 +1,134 @@
 /* =============================================================
-   ANASTASIIA KORKINA — PORTFOLIO
+   ANASTASIIA KORKINA — PORTFOLIO  v2
    script.js
    ============================================================= */
 
 'use strict';
 
-/* ── Scroll-aware Navbar ─────────────────────────────────── */
-(function initNavbar() {
-  const navbar = document.getElementById('navbar');
-  if (!navbar) return;
-
-  const onScroll = () => {
-    navbar.classList.toggle('scrolled', window.scrollY > 40);
-  };
-
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll(); // run once on load
+/* ── Navbar scroll state ──────────────────────────────────── */
+(function () {
+  const nav = document.getElementById('navbar');
+  if (!nav) return;
+  const tick = () => nav.classList.toggle('scrolled', window.scrollY > 32);
+  window.addEventListener('scroll', tick, { passive: true });
+  tick();
 })();
 
-/* ── Mobile Menu ──────────────────────────────────────────── */
-(function initMobileMenu() {
-  const burger  = document.getElementById('navBurger');
-  const mobileNav = document.getElementById('navMobile');
-  const navbar  = document.getElementById('navbar');
-  if (!burger || !mobileNav) return;
+/* ── Mobile menu ──────────────────────────────────────────── */
+(function () {
+  const burger = document.getElementById('navBurger');
+  const drawer = document.getElementById('navDrawer');
+  const nav    = document.getElementById('navbar');
+  if (!burger || !drawer) return;
 
-  const toggle = () => {
-    const isOpen = burger.classList.toggle('open');
-    burger.setAttribute('aria-expanded', String(isOpen));
-    mobileNav.setAttribute('aria-hidden', String(!isOpen));
-    navbar.classList.toggle('menu-open', isOpen);
-    if (isOpen) {
-      mobileNav.classList.add('open');
-    } else {
-      mobileNav.classList.remove('open');
-    }
+  const open  = () => {
+    burger.classList.add('open');
+    drawer.classList.add('open');
+    drawer.removeAttribute('aria-hidden');
+    burger.setAttribute('aria-expanded', 'true');
   };
+  const close = () => {
+    burger.classList.remove('open');
+    drawer.classList.remove('open');
+    drawer.setAttribute('aria-hidden', 'true');
+    burger.setAttribute('aria-expanded', 'false');
+  };
+  const toggle = () => burger.classList.contains('open') ? close() : open();
 
   burger.addEventListener('click', toggle);
+  drawer.querySelectorAll('a').forEach(a => a.addEventListener('click', close));
 
-  // Close when any mobile link is clicked
-  mobileNav.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-      burger.classList.remove('open');
-      burger.setAttribute('aria-expanded', 'false');
-      mobileNav.classList.remove('open');
-      mobileNav.setAttribute('aria-hidden', 'true');
-      navbar.classList.remove('menu-open');
-    });
+  // Close on outside click
+  document.addEventListener('click', e => {
+    if (!nav.contains(e.target)) close();
   });
 })();
 
-/* ── Dark / Light Mode Toggle ─────────────────────────────── */
-(function initThemeToggle() {
-  const btn  = document.getElementById('themeToggle');
-  const icon = btn && btn.querySelector('.theme-icon');
+/* ── Theme toggle ─────────────────────────────────────────── */
+(function () {
+  const btn = document.getElementById('themeToggle');
   if (!btn) return;
 
-  const STORAGE_KEY = 'ak-theme';
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-  const savedTheme = localStorage.getItem(STORAGE_KEY);
-  const initial = savedTheme || (prefersDark ? 'dark' : 'light');
-
-  const apply = (theme) => {
-    document.body.setAttribute('data-theme', theme);
-    if (icon) icon.textContent = theme === 'dark' ? '☾' : '☀';
-    localStorage.setItem(STORAGE_KEY, theme);
+  const KEY  = 'ak-theme';
+  const pref = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  const apply = t => {
+    document.documentElement.setAttribute('data-theme', t);
+    document.body.setAttribute('data-theme', t);
+    localStorage.setItem(KEY, t);
   };
 
-  apply(initial);
+  apply(localStorage.getItem(KEY) || pref);
 
   btn.addEventListener('click', () => {
-    const current = document.body.getAttribute('data-theme');
-    apply(current === 'dark' ? 'light' : 'dark');
+    const cur = document.body.getAttribute('data-theme');
+    apply(cur === 'dark' ? 'light' : 'dark');
   });
 })();
 
-/* ── Scroll Reveal (Intersection Observer) ────────────────── */
-(function initReveal() {
-  const elements = document.querySelectorAll('.reveal');
-  if (!elements.length) return;
+/* ── Cursor glow (desktop) ────────────────────────────────── */
+(function () {
+  const glow = document.getElementById('cursorGlow');
+  if (!glow || window.matchMedia('(pointer: coarse)').matches) {
+    if (glow) glow.style.display = 'none';
+    return;
+  }
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
-  );
+  let raf, mx = -1000, my = -1000;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    if (!raf) raf = requestAnimationFrame(update);
+  });
 
-  elements.forEach(el => observer.observe(el));
+  function update() {
+    glow.style.transform = `translate(calc(${mx}px - 50%), calc(${my}px - 50%))`;
+    raf = null;
+  }
 })();
 
-/* ── Active nav link on scroll ────────────────────────────── */
-(function initActiveNav() {
-  const sections  = document.querySelectorAll('section[id]');
-  const navLinks  = document.querySelectorAll('.nav-links a');
-  if (!sections.length || !navLinks.length) return;
+/* ── Scroll reveal ────────────────────────────────────────── */
+(function () {
+  const els = document.querySelectorAll('.reveal');
+  if (!els.length) return;
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        const id = entry.target.getAttribute('id');
-        navLinks.forEach(a => {
-          const matches = a.getAttribute('href') === `#${id}`;
-          a.style.color = matches ? 'var(--text)' : '';
-        });
-      });
-    },
-    { rootMargin: '-50% 0px -50% 0px' }
-  );
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('visible');
+      io.unobserve(e.target);
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -32px 0px' });
 
-  sections.forEach(s => observer.observe(s));
+  els.forEach(el => io.observe(el));
 })();
 
-/* ── Smooth-scroll polyfill for older Safari ──────────────── */
-(function smoothScrollFallback() {
-  document.querySelectorAll('a[href^="#"]').forEach(link => {
-    link.addEventListener('click', function (e) {
-      const targetId = this.getAttribute('href').slice(1);
-      const target = document.getElementById(targetId);
-      if (!target) return;
+/* ── Active nav highlighting ──────────────────────────────── */
+(function () {
+  const sections = document.querySelectorAll('section[id]');
+  const links    = document.querySelectorAll('.nav-link');
+  if (!sections.length || !links.length) return;
+
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      links.forEach(a => {
+        const active = a.getAttribute('href') === `#${e.target.id}`;
+        a.style.color = active ? 'var(--text)' : '';
+      });
+    });
+  }, { rootMargin: '-45% 0px -45% 0px' });
+
+  sections.forEach(s => io.observe(s));
+})();
+
+/* ── Smooth scroll (Safari polyfill) ─────────────────────── */
+(function () {
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', function (e) {
+      const id  = this.getAttribute('href').slice(1);
+      const tgt = document.getElementById(id);
+      if (!tgt) return;
       e.preventDefault();
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      tgt.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   });
 })();
