@@ -186,12 +186,16 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .reveal.visible { opacity: 1; transform: translateY(0); }
 
 /* Stagger for project cards */
-.project-list .pcard:nth-child(1) { transition-delay:   0ms; }
-.project-list .pcard:nth-child(2) { transition-delay:  70ms; }
-.project-list .pcard:nth-child(3) { transition-delay: 140ms; }
-.project-list .pcard:nth-child(4) { transition-delay: 210ms; }
-.project-list .pcard:nth-child(5) { transition-delay: 280ms; }
-.project-list .pcard:nth-child(6) { transition-delay: 350ms; }
+.project-list .pcard:nth-child(1)  { transition-delay:   0ms; }
+.project-list .pcard:nth-child(2)  { transition-delay:  70ms; }
+.project-list .pcard:nth-child(3)  { transition-delay: 140ms; }
+.project-list .pcard:nth-child(4)  { transition-delay: 210ms; }
+.project-list .pcard:nth-child(5)  { transition-delay: 280ms; }
+.project-list .pcard:nth-child(6)  { transition-delay: 350ms; }
+.project-list .pcard:nth-child(7)  { transition-delay: 420ms; }
+.project-list .pcard:nth-child(8)  { transition-delay: 490ms; }
+.project-list .pcard:nth-child(9)  { transition-delay: 560ms; }
+.project-list .pcard:nth-child(10) { transition-delay: 630ms; }
 
 /* Stagger services */
 .svc-list .svc-item:nth-child(1) { transition-delay:   0ms; }
@@ -897,10 +901,13 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 }
 
 /* Per-project gradient backgrounds */
+.pcard-img--ch  { background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%); }
+.pcard-img--nn  { background: linear-gradient(135deg, #581c87 0%, #c026d3 100%); }
+.pcard-img--yb  { background: linear-gradient(135deg, #134e4a 0%, #0d9488 100%); }
+.pcard-img--bm  { background: linear-gradient(135deg, #4c0519 0%, #e11d48 100%); }
+.pcard-img--lh  { background: linear-gradient(135deg, #0c4a6e 0%, #0ea5e9 100%); }
 .pcard-img--wg  { background: linear-gradient(135deg, #064e3b 0%, #059669 100%); }
 .pcard-img--vt  { background: linear-gradient(135deg, #1e1b4b 0%, #3730a3 100%); }
-.pcard-img--fp  { background: linear-gradient(135deg, #7c2d12 0%, #ea580c 100%); }
-.pcard-img--nm  { background: linear-gradient(135deg, #2e1065 0%, #7c3aed 100%); }
 .pcard-img--al  { background: linear-gradient(135deg, #78350f 0%, #d97706 100%); }
 .pcard-img--uoa { background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); }
 .pcard-img--kv  { background: linear-gradient(135deg, #831843 0%, #ec4899 100%); }
